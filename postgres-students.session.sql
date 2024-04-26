@@ -19,7 +19,7 @@ CREATE TABLE products_version_2(
     price numeric(8, 2) NOT NULL
 );
 
-ALTER TABLE products_version_2
+ALTER TABLE products
 ADD COLUMN is_luxury boolean GENERATED ALWAYS AS (price > 800) STORED;
 
 INSERT INTO products_version_2 (brand, model, price)
@@ -27,3 +27,13 @@ VALUES
 ('Iphone', '15 Pro', 1300),
 ('Samsung', 'S10', 400),
 ('Xiaomi', 'Redmi 5', 200);
+
+UPDATE products SET price = price * 3 WHERE price < 600;
+
+INSERT INTO products(brand, model, price, category) VALUES
+('Xioami', '454545454', 1000, 'phones') RETURNING id, brand, model;
+
+INSERT INTO products(brand, model, price, category) VALUES
+('Iphone', '14 Pro', 8500, 'phones') RETURNING *;
+
+UPDATE products SET price = 850 WHERE id = 7 RETURNING *;
