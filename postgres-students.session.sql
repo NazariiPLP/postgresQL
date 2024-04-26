@@ -5,21 +5,25 @@
 -- Каскадне видалення - якщо ви видаляєте запис у батьківській таблиці, то автоматично будуть видалені всі записи у дочірніх таблицях, які мають посилання на цей видалений запис.
 -- Каскадне оновлення - якщо значення у записі батьківської таблиці змінюється, то всі відповідні записи у дочірніх таблицях автоматично змінюються згідно цих змін
 
-CREATE TABLE orders(
-    ...
-    user_id int REFERENCES user(id) ON UPDATE CASCADE ON DELETE RESTRICT 
-    ...
+/*
+В таблиці products створити генерований стовпець is_luxury
+
+Якщо price > 800 -> true
+else -> false
+*/
+
+CREATE TABLE products_version_2(
+    id serial PRIMARY KEY,
+    brand varchar(256) NOT NULL CHECK(brand != ''),
+    model varchar(256) NOT NULL CHECK(model != ''),
+    price numeric(8, 2) NOT NULL
 );
 
-DROP TABLE reactions;
+ALTER TABLE products_version_2
+ADD COLUMN is_luxury boolean GENERATED ALWAYS AS (price > 800) STORED;
 
-CREATE TABLE reactions(
-    content_id int REFERENCES contents(id) ON DELETE CASCADE,
-    user_id int REFERENCES users(id),
-    is_liked boolean
-);
-
-INSERT INTO reactions VALUES
-(1, 1, false);
-
-DELETE FROM contents WHERE id = 1;
+INSERT INTO products_version_2 (brand, model, price)
+VALUES 
+('Iphone', '15 Pro', 1300),
+('Samsung', 'S10', 400),
+('Xiaomi', 'Redmi 5', 200);
