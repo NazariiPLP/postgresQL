@@ -63,3 +63,29 @@ WHERE extract("years" from age(birthday)) BETWEEN 2 and 10;
 SELECT id, first_name, last_name, birthday, extract("years" from age(birthday)) AS "years old" FROM users
 WHERE extract("years" from age(birthday)) BETWEEN 2 and 10;
 
+
+-----------------------
+
+/*
+
+Пагінація - спосіб розділити великий об'єм інформації на менші частини 
+
+1) Нам потрібні сторінки
+2) Нам потрібно знати, яка кількість результатів буде відображатись на кожній сторінці
+
+*/
+
+-- LIMIT - задача кількість результатів, яку потрібно отримати
+--           (кількість результатів на сторінці)
+
+SELECT * FROM users
+LIMIT 50
+OFFSET 200;
+
+-- Скільки потрібно відступати (формуоа для розрахуку OFFSET)
+/*
+
+У цій формулі, перша сторінка буде вважатимь нульовою
+
+OFFSET = LIMIT * сторінка_яку_ми_запитуємо - 1
+*/
