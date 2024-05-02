@@ -48,3 +48,18 @@ WHERE (gender = 'female' AND is_subscribe);
 
 SELECT id, first_name, last_name, make_interval(40, 8) FROM users;
 
+
+----------------------
+
+-- Аліаси - псевдоніми
+-- Якщо кирилиця - обов'язково лапки
+-- Якщо латиниця - можна з лапками або без
+SELECT first_name AS "Ім'я", last_name AS "Прізвище", id AS "особистий номер" FROM users;
+
+
+SELECT id, first_name, last_name, birthday, extract("years" from age(birthday)) AS years FROM users
+WHERE extract("years" from age(birthday)) BETWEEN 2 and 10;
+
+SELECT id, first_name, last_name, birthday, extract("years" from age(birthday)) AS "years old" FROM users
+WHERE extract("years" from age(birthday)) BETWEEN 2 and 10;
+
