@@ -19,3 +19,12 @@ INSERT INTO emoloyees(name, salary, work_hours) VALUES
 UPDATE emoloyees
 SET salary = salary * 1.2
 WHERE work_hours > 150;
+
+
+----
+
+INSERT INTO users (first_name, last_name, email, gender, birthday, is_subscribe) VALUES
+('Test', 'Testovich', 'test@gmail.com', 'gender', '1800-12-12', false) RETURNING *;
+
+DELETE FROM users
+WHERE id = 5;
