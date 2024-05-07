@@ -466,3 +466,30 @@ FROM products AS p JOIN orders_to_products AS otp
 ON p.id = otp.products_id
 GROUP BY p.brand
 ORDER BY "quantity" DESC;
+
+--- Задача: знайти юзерів, які нічого не замовляли
+
+-- варіант 1
+
+SELECT * FROM 
+users AS u LEFT JOIN orders AS o
+ON u.id = o.customer_id
+WHERE o.customer_id IS NULL;
+
+
+-- варіант 2
+
+SELECT * FROM users
+WHERE id IN (
+    SELECT id FROM users
+    EXCEPT
+    SELECT customer_id FROM orders;
+);
+
+--- Задача: знайти всіх юзерів і сумарну кількість їх замовлень
+
+SELECT u.*, count(*) FROM
+users AS u JOIN orders AS o
+ON u.id = o.customer_id
+GROUP BY u.id;
+
