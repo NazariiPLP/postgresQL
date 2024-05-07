@@ -78,9 +78,7 @@ WHERE extract("years" from age(birthday)) BETWEEN 2 and 10;
 -- LIMIT - задача кількість результатів, яку потрібно отримати
 --           (кількість результатів на сторінці)
 
-SELECT * FROM users
-LIMIT 50
-OFFSET 200; -- 50 * 4
+ -- 50 * 4
 
 -- Скільки потрібно відступати (формуоа для розрахуку OFFSET)
 /*
@@ -127,6 +125,64 @@ WHERE char_length("FN"."full name") < 10; -- фільтрація відбува
 - salary
 - birthday
 
+*/
+
+CREATE TABLE workers(
+    id serial PRIMARY KEY,
+    name varchar(100) NOT NULL CHECK (name != ''),
+    salary int NOT NULL CHECK (salary >= 0),
+    birthday date NOT NULL CHECK (birthday < current_date)
+);
+
+INSERT INTO workers(name, salary, birthday) VALUES
+('Oleg', 300, '1968-03-26');
+
+INSERT INTO workers(name, salary, birthday) VALUES
+('Yaroslawa', 500, '1958-09-12');
+
+INSERT INTO workers(name, salary, birthday) VALUES
+('Sasha', 1000, '1990-12-30'),
+('Masha', 200, '1985-11-01');
+
+UPDATE workers
+SET salary = 500
+WHERE id = 1;
+
+UPDATE workers
+SET salary = 400
+WHERE salary > 500;
+
+SELECT * FROM workers
+WHERE salary >= 400;
+
+SELECT * FROM workers
+WHERE id = 4;
+
+SELECT salary, extract("years" from age(birthday)) AS "years old" FROM workers
+WHERE id = 1;
+
+SELECT * FROM workers
+WHERE name = 'Yaroslawa';
+
+SELECT * FROM workers
+WHERE extract('years' from age(birthday)) = 30 OR salary > 800;
+
+SELECT *, extract(years from age(birthday)) AS "age" FROM workers
+WHERE extract(years from age(birthday)) BETWEEN 25 and 28;
+
+SELECT * FROM workers
+WHERE extract('month' from birthday) = 9;
+
+DELETE FROM workers
+WHERE id = 4;
+
+DELETE FROM workers
+WHERE name = 'Oleg';
+
+DELETE FROM workers
+WHERE extract('years' from age(birthday)) > 30;
+
+/*
 
 1. Додайте робітника з ім'ям Олег, з/п 300
 
@@ -149,7 +205,7 @@ WHERE char_length("FN"."full name") < 10; -- фільтрація відбува
 9. Спробувати знайти робітника з ім'ям "Petya"
 
 10. Вибрати працівників у віці 30 років АБО з з/п > 800
-WHERE _кількість_років_ = 30 OR salary > 80;
+WHERE _кількість_років_ = 30 OR salary > 800;
 
 11. Вибрати всіх працівників у віці від 25 до 28 років
 
