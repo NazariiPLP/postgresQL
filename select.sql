@@ -218,3 +218,38 @@ WHERE _кількість_років_ = 30 OR salary > 800;
 15. Видалити всіх робітників старших за 30 років
 
 */
+
+
+
+--- Агрегатні функції - функції, які виконують якусь операцію над групою рядків в межах стовпця і повертають одне значення
+--- COUNT, SUM, AVG, MIN, MAX
+
+SELECT max(weight) FROM users;
+
+SELECT min(weight) FROM users;
+
+SELECT sum(weight) FROM users;
+
+SELECT avg(weight) FROM users;
+
+-- Підрахувати кількість записів в таблиці
+
+SELECT count(id) FROM users;
+
+-- Знайти середню вагу чоловік і жінок (окремо)
+
+SELECT gender, avg(weight) FROM users
+GROUP BY gender;
+
+-- Знайти середню вагу чоловіків
+
+SELECT avg(weight) FROM users
+WHERE gender = 'male';
+
+-- Знайти середню вагу всіх користувачів, старших за 10 років
+
+SELECT avg(weight) FROM users
+WHERE extract('years' from age(birthday)) > 10;
+
+SELECT brand, avg(price) FROM products
+GROUP BY brand;
