@@ -336,7 +336,7 @@ INSERT INTO B VALUES
 ('XXX'), -- A
 ('ZXZ'),
 ('YXZ'), -- A
-('YXY');
+('YXY'); -- A
 
 SELECT * FROM A, B;
 
@@ -350,14 +350,58 @@ SELECT * FROM A, B;
 ---- А мінус В - все з А мінус спільні елементи для А і В
 ---- В мінус А - все з А мінус спільні елементи для В і А
 
-SELECT * FROM A
+SELECT v FROM A
 UNION 
 SELECT * FROM B; -- ОТРИМАЄМО ВСІ УНІКАЛЬНІ ЗАПИСИ З ДЖВОХ ТАБЛИЦЬ БЕЗ ДУБЛЮВАНЬ
 
-SELECT * FROM A
+SELECT v FROM A
 INTERSECT
 SELECT * FROM B; -- ОТРИМАЄ 3 ЕЛЕМЕНТИ, ЯКІ ПОВТОРЮЮТЬСЯ В ДВОХ ТАБЛИЦЯХ
 
-SELECT * FROM A
+SELECT v FROM A
 EXCEPT
 SELECT * FROM B; -- ОТРИМАЄМО ВСІ ЕЛЕМЕНТИ З ТАБЛИЦЯ А, МІНУС ЕЛЕМЕНТИ З ТАБЛИЦІ В
+
+SELECT * FROM B
+EXCEPT
+SELECT v FROM A; -- ОТРИМАЄМО ВСІ ЕЛЕМЕНТИ З ТАБЛИЦЯ B, МІНУС ЕЛЕМЕНТИ З ТАБЛИЦІ A
+
+---------------
+
+SELECT count(*)
+FROM products;
+
+SELECT avg(price)
+FROM products;
+
+SELECT brand, avg(price)
+FROM products
+GROUP BY brand;
+
+SELECT avg(price)
+FROM products
+WHERE brand = 'Samsung';
+
+SELECT *
+FROM products
+ORDER BY price DESC
+LIMIT 5;
+
+INSERT INTO users (first_name, last_name, email, gender, is_subscribe, birthday)
+VALUES
+('User 1', 'Test 1', 'email1@gmail.com', 'male', true, '1990-09-10'),
+('User 2', 'Test 2', 'email2@gmail.com', 'female', true, '1990-09-10'),
+('User 3', 'Test 3', 'email3@gmail.com', 'male', false, '1990-09-10');
+
+-- Задача: знайти id юзерів, які робили замовлення
+
+SELECT id FROM users
+INTERSECT
+SELECT customer_id FROM orders;
+
+-- Задача: знайти id юзерів, які не робили замовлень
+
+SELECT id FROM users
+EXCEPT
+SELECT customer_id FROM orders;
+
