@@ -405,3 +405,64 @@ SELECT id FROM users
 EXCEPT
 SELECT customer_id FROM orders;
 
+
+
+------ Поєднання множин
+/*
+
+Поєднання множин - операція, яка об'єднує дві чи більше множин в одну множину.
+
+*/
+
+SELECT A.v AS "id", A.t AS "price", B.v AS "phone.id"
+FROM a, b
+WHERE A.v = B.v;
+
+
+----
+
+
+SELECT A.v AS "id", A.t AS "price", B.v AS "phone.id"
+FROM A JOIN B
+On A.v = B.v;
+
+-- Задача: знайти всі замовлення бзера, у якого id = 4
+
+SELECT *
+FROM users JOIN orders
+ON orders.customer_id = user.id
+WHERE users.id = 5;
+
+------
+
+SELECT u, *, o.id AS "order_id"
+FROM users AS u JOIN orders AS o
+ON o.customer_id = u.id
+WHERE u.id = 4;
+
+------
+
+SELECT *
+FROM A JOIN B ON A.v = B.v
+JOIN products ON A.t = products.id;
+
+--- Знайти id всіх замовлень, де були замовлені телефони Samsung
+SELECT *
+FROM products AS p JOIN orders_to_products AS otp
+ON p.id = otp.products_id
+WHERE p.brand = 'Samsung';
+
+-- Модифікуйте попередній запит. Порахуйте, скільки замовлень бренду Самсунг
+
+SELECT count(*)
+FROM products AS p JOIN orders_to_products AS otp
+ON p.id = otp.products_id
+WHERE p.brand = 'Samsung';
+
+-- Зробити топ продажів. Який бренд найчастіше купували?
+
+SELECT count(*)
+FROM products AS p JOIN orders_to_products AS otp
+ON p.id = otp.products_id
+GROUP BY p.brand
+ORDER BY "quantity" DESC;
