@@ -274,3 +274,35 @@ SELECT * FROM products
 ORDER BY quantity ASC
 LIMIT 3;
 
+SELECT * FROM products
+ORDER BY price ASC;
+
+SELECT * FROM products
+ORDER BY price DESC
+LIMIT 5;
+
+
+
+-- Фільтрація груп
+
+/*
+
+Знайти кількість користувачів у кожній віковій групі
+
+*/
+
+SELECT count(*) AS "кількість" extract('years' from age(birthday)) AS "вікова група"
+FROM users
+GROUP BY "вікова група"
+ORDER BY "вікова група";
+
+/*
+
+Модифікувати запит таким чином, щоб залишились вікові групі, де < 500 користувачів
+
+*/
+
+SELECT count(*), extract('years' from age(birthday)) AS "вікова група"
+FROM users
+GROUP BY "вікова група"
+HAVING count(*) < 500;
