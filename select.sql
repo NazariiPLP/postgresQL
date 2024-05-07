@@ -306,3 +306,58 @@ SELECT count(*), extract('years' from age(birthday)) AS "вікова група
 FROM users
 GROUP BY "вікова група"
 HAVING count(*) < 500;
+
+
+
+--- РЕЛЯЦІЙНІ ОПЕРАЦІЇ
+
+CREATE TABLE A (
+    v char(3),
+    t int 
+);
+
+CREATE TABLE B (
+    v char (3)
+);
+
+INSERT INTO A VALUES
+('XXX', 1),
+('XXY', 1),
+('XXZ', 1),
+('XYX', 2),
+('XYY', 2),
+('XYZ', 2),
+('YXX', 3),
+('YXY', 3);
+('XYZ', 3);
+
+INSERT INTO B VALUES
+('ZXX'),
+('XXX'), -- A
+('ZXZ'),
+('YXZ'), -- A
+('YXY');
+
+SELECT * FROM A, B;
+
+-- UNION - об'єднання
+-- (все, те, що в A + все те, що в B. Спільне - в одному екземплярі)
+
+-- INTERSEC - перетин множин
+-- (все те, що є і в A, і в B в єдиному екземплярі)
+
+-- Різниця:
+---- А мінус В - все з А мінус спільні елементи для А і В
+---- В мінус А - все з А мінус спільні елементи для В і А
+
+SELECT * FROM A
+UNION 
+SELECT * FROM B; -- ОТРИМАЄМО ВСІ УНІКАЛЬНІ ЗАПИСИ З ДЖВОХ ТАБЛИЦЬ БЕЗ ДУБЛЮВАНЬ
+
+SELECT * FROM A
+INTERSECT
+SELECT * FROM B; -- ОТРИМАЄ 3 ЕЛЕМЕНТИ, ЯКІ ПОВТОРЮЮТЬСЯ В ДВОХ ТАБЛИЦЯХ
+
+SELECT * FROM A
+EXCEPT
+SELECT * FROM B; -- ОТРИМАЄМО ВСІ ЕЛЕМЕНТИ З ТАБЛИЦЯ А, МІНУС ЕЛЕМЕНТИ З ТАБЛИЦІ В
