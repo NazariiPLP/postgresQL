@@ -493,3 +493,71 @@ users AS u JOIN orders AS o
 ON u.id = o.customer_id
 GROUP BY u.id;
 
+INSERT INTO products (brand, model, category, price, quantity)
+VALUES ('Microsoft', '12345', 'phones', 200, 2);
+
+
+/*
+
+1. Порахувати середній чек по всьому магазину
+
+2. Витягти всі замовлення вище середнього чека
+
+3. Витягти всіх коористувачів, в яких кількість замовлень вище середнього
+
+4. Витягти кількість користувачів та кількість товарів, які вони замовляли (кількість замовлень * quantity)
+
+*/
+
+-- 1
+
+SELECT avg(owc.cost) FROM (
+    -- запит знаходить суму кожного замовлення
+    SELECT otp.order_id, sum(p.price * otp.quantity) AS cost FROM 
+    orders_to_products AS otp JOIN products AS p
+    ON otp.products_id = p.id
+    GROUP BY otp.order_id
+) AS owc;
+
+-- 2
+
+SELECT owc.* FROM ( -- orders with cost
+    -- запит знаходить суму кожного замовлення
+    SELECT otp.order_id, sum(p.price * otp.quantity) AS cost FROM 
+    orders_to_products AS otp JOIN products AS p
+    ON otp.products_id = p.id
+    GROUP BY otp.order_id;
+) AS owc
+WHERE owc.cost > (
+    SELECT avg(own.cost) FROM (
+    -- запит знаходить суму кожного замовлення
+    SELECT otp.order_id, sum(p.price * otp.quantity) AS cost FROM 
+    orders_to_products AS otp JOIN products AS p
+    ON otp.products_id = p.id
+    GROUP BY otp.order_id
+    ) AS owc
+);
+
+-- 3
+
+WITH orders_with_counts AS (
+    -- Кількість замовлень кожного користувача
+    SELECT customer_id, count(*) AS orders_count FROM orders
+    GROUP BY customer_id
+)
+
+SELECT * FROM 
+orders_with_counts JOIN users
+ON user.id = orders_with_counts.customer_id
+WHERE orders_with_counts.orders_count > (
+    SELECT avg(orders_with_counts.orders_count) FROM orders_with_counts
+);
+
+-- 4
+
+SELECT u.id, i.first_name, u.last_name, sum(otp.quantity) AS "products quantity" FROM
+users AS u JOIN orders AS o
+ON u.id = o.customer_id
+JOIN orders_to_products AS otp
+ON o.id = otp.order_id
+GROUP BY u.id;
