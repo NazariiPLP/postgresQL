@@ -1,79 +1,94 @@
 -- 1 НФ: в кожній комірці зберігається атомарне значення (без списків ітп)
 -- 2 НФ: 1 НФ + таблиця повинна мати ключ; ключ функціонально визначає всю строку
 -- 3 НФ: 2 НФ + ми маємо прибрати транзитивні функціональні залежності атрибутів
+-- 4 НФ: неключові транзитивні залежності не можуть бути в складі складеного ключа
 
 
+/*
 
-----------------------
+-- teachers
 
-DROP TABLE employees, positions, departments;
+-- students
 
-----------------------
+-- subjects
 
-CREATE TABLE employees(
+Обмеження:
+1 викладач може вести тільки 1 предмет
+
+
+-- teachers 1:m subjects
+
+- students m:n subjects
+
+-- students m:n teachers
+
+*/
+
+------------------------------------
+
+CREATE TABLE students (
     id serial PRIMARY KEY,
-    name varchar(200),
-    position varchar(200) REFERENCES positions(name)
+    name varchar(30)
 );
 
-CREATE TABLE positions(
-    name varchar(300) PRIMARY KEY,
-    department varchar(300) REFERENCES departments(name),
-    car_aviability boolean
+INSERT INTO students (name) VALUES 
+('Ivanov'),
+('Petrov'),
+('Sidorov');
+
+------------------------------------
+
+CREATE TABLE teachers (
+    id serial PRIMARY KEY,
+    name varchar(30),
+    subject varchar(50) REFERENCES subjects(name)
 );
 
-CREATE TABLE departments(
-    name varchar(200) PRIMARY KEY,
-    phone_number varchar(15)
+CREATE TABLE subjects(
+    name varchar(50) PRIMARY KEY
+);
+
+INSERT INTO subjects VALUES
+('Системи штучного інтелекту'),
+('Хмарний компьютинг');
+
+INSERT INTO teachers(name, subject) VALUES 
+('Smirnov', 'Системи штучного інтелекту'),
+('Petrenko', 'Хмарний компьютинг');
+
+--------------------------------------------
+
+CREATE TABLE students_to_teachers(
+    teacher_id int REFERENCES teachers(id),
+    student_id int REFERENCES students(id),
+    PRIMARY KEY (teacher_id, student_id)
 );
 
 
-----------------------
-
-INSERT INTO departments VALUES
-('Top management', '11-11-11'),
-('Operational direction', '22-22-22'),
-('Financial direction', '33-33-33'),
-('Developers direction', '44-44-44');
-
-----------------------
-
-INSERT INTO positions VALUES
-('CFO', 'Top management', true),
-('CEO', 'Top management', true),
-('SMM/PR division', 'Operational direction', false),
-('Accountant', 'Financial direction', false),
-('JS developer', 'Developers direction', false),
-('Sales manager', 'Operational direction', false),
-('Bodyguard for developers', 'Operational direction', true),
-('Driver', 'Operational direction', true);
+/*
+Обмеження:
+1 викладач може вести тільки 1 предмет
+*/
+INSERT INTO students_to_teachers VALUES
+(1, 1),
+(1, 2),
+(2, 1);
 
 
-----------------------
+
+--------------------------------------------
+
+/*
+                                +               +                   +
+Задача: реалізуваьт витяг, який студент, який предмет вивчає і хто викладає предмет
 
 
-INSERT INTO employees (name, position) VALUES
-('John', 'JS developer'),
-('Jane', 'Sales manager'),
-('Jake', 'Bodyguard for developers'),
-('Andrew', 'Driver'),
-('Milena', 'CFO'),
-('Sergey', 'CEO'),
-('Matthew', 'SMM/PR division'),
-('Timofey', 'Accountant');
+students -> students_to_teachers -> teachers
 
+*/
 
----------------------- Дістаємо інфу про співробітника + доступне / не доступне авто
-
-
-SELECT employees.id, employees.name, employees.position, positions.car_aviability FROM 
-employees JOIN positions
-ON employees.position = positions.name;
-
----------------------- Дістаємо інфу про співробітника + номер телефону відділу + доступне / не доступне авто
-
-SELECT employees.id, employees.name, employees.position, positions.car_aviability, departments.phone_number AS "Department phone number" FROM 
-employees JOIN positions
-ON employees.position = positions.name
-JOIN departments
-ON positions.department = departments.name;
+SELECT students.id, students.name, teachers.name, teachers.subject FROM 
+students JOIN students_to_teachers
+ON students.id = students_to_teachers.student_id
+JOIN teachers
+ON students_to_teachers.teacher_id = teachers.id;
