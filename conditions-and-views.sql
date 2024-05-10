@@ -1,55 +1,36 @@
-
--- Вивести інфу про всіх юзерів + інфу скільки хто зробив замовлень
-
-SELECT u.first_name, u.last_name, u.email, count(o.id) AS "orders_amount" * FROM
-users AS u LEFT JOIN orders AS o
-ON u.id = o.customer_id
-GROUP BY u.id
-ORDER BY "orders_amount";
+/*
 
 
-CREATE OR REPLACE VIEW users_with_orders_amount AS (
-    SELECT u.first_name, u.last_name, u.email, count(o.id) AS "orders_amount" FROM
-    users AS u LEFT JOIN orders AS o
-    ON u.id = o.customer_id
-    GROUP BY u.id
-    ORDER BY "orders_amount"
-);
+CREATE FUNCTION function_name ([parameter1 data_type [, parameter2 data_type, ...]])
+RETURNS return_data_type
+AS
+$$
+BEGIN
 
-SELECT * FROM users_with_orders_amount;
+    -- Тіло функції (операції)
+    RETURN result;
 
+END;
+$$
+LANGUAGE plpgsql; -- Мова програмування функції для Postgresql
 
--- Отримати email тих юзерів, які мають менше 2 замовлень
+*/
 
+CREATE FUNCTION add_numbers(number1 integer, number2 integer)
+RETURNS integer
+AS
+$$
+BEGIN
+    RETURN number1 + number2;
+END;
+$$
+LANGUAGE plpgsql;
 
-SELECT email, order_amount FROM users_with_orders_amount
-WHERE orders_amount < 2;
+-- Виклик функції
 
--- Можна видаляти вьюхи
+SELECT add_numbers(5, 15);
 
-DROP VIEW with orders_amount;
+-- Видалення функції
 
-
-
--- Створити предствлення, яке зберігає замовлення з їхньою вартістю
--- Додамо до цієї вьюхи інформацію про замовника (id замовника)
-
-CREATE OR REPLACE VIEW orders_with_price AS (
-    SELECT o.id, o.customer_id, sum(p.price * otp.quantity) AS "order_sum", o.customer_id, o.status FROM
-    orders AS o JOIN orders_to_products AS otp
-    ON o.id = otp.order_id
-    JOIN products AS p
-    ON p.id = otp.products_id
-    GROUP BY o.id
-);
-
-DROP VIEW orders_with_price;
-
-
--- Вивести юзерів з сумою коштів, яку вони витратили у нашому магазині
-
-SELECT u.id. u.email, sum(owp.order_sum) AS "sum" FROM 
-users AS u LEFT JOIN orders_with_price AS owp
-ON u.id = owp.customer_id
-GROUP BY u.id
-ORDER BY sum;
+DROP FUNCTION add_numbers;
+DROP FUNCTION add_numbers(integer, integer);
